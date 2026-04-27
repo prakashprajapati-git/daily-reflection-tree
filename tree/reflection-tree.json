@@ -1,200 +1,472 @@
 {
   "metadata": {
     "title": "The Daily Reflection Tree",
-    "version": "1.0",
-    "author": "Prakash Kumar Prajapati"
+    "version": "2.0",
+    "author": "Prakash Kumar Prajapati",
+    "description": "A deterministic end-of-day reflection tool covering three psychological axes: Locus, Orientation, and Radius.",
+    "axes": ["locus", "orientation", "radius"]
   },
   "nodes": {
     "start": {
       "id": "start",
       "type": "start",
-      "text": "Welcome to your reflection space. Let's take a few minutes to look back at today with fresh eyes.",
+      "text": "Good evening. This is your space — no performance, no judgment. Let's take a quiet look at your day.",
       "next": "q_energy_check"
     },
+
     "q_energy_check": {
       "id": "q_energy_check",
       "type": "question",
-      "text": "Before we dive in, how would you describe your overall energy as the day closes?",
+      "axis": "locus",
+      "text": "Before we dive in — how would you describe today in one word or phrase?",
       "options": [
-        { "text": "I feel drained by the day's events.", "next": "q_locus_friction" },
-        { "text": "I feel satisfied with what I've done.", "next": "q_locus_impact" },
-        { "text": "I feel neutral—just another day.", "next": "q_locus_friction" }
+        { "text": "Exhausting", "next": "q_locus_friction" },
+        { "text": "Productive", "next": "q_locus_impact" },
+        { "text": "Frustrating", "next": "q_locus_friction" },
+        { "text": "Steady — nothing dramatic", "next": "q_locus_friction" }
       ]
     },
+
     "q_locus_friction": {
       "id": "q_locus_friction",
       "type": "question",
-      "text": "When you hit a roadblock today, how did it feel to you?",
+      "axis": "locus",
+      "text": "You said '{q_energy_check}'. When something didn't go as planned today, what was your first instinct?",
       "options": [
-        { "text": "It felt like the world was pushing against me.", "next": "d_locus_victim" },
-        { "text": "It felt like a puzzle I hadn't solved yet.", "next": "d_locus_victor" },
-        { "text": "I felt stuck because others didn't do their part.", "next": "d_locus_victim" }
+        {
+          "text": "Figure out what I could still control",
+          "next": "d_locus_victor",
+          "signal": "axis1:internal"
+        },
+        {
+          "text": "Feel frustrated by things outside my control",
+          "next": "d_locus_victim",
+          "signal": "axis1:external"
+        },
+        {
+          "text": "Wait and see if things sorted themselves out",
+          "next": "d_locus_victim",
+          "signal": "axis1:external"
+        },
+        {
+          "text": "Adapt and find another way through",
+          "next": "d_locus_victor",
+          "signal": "axis1:internal"
+        }
       ]
     },
+
     "q_locus_impact": {
       "id": "q_locus_impact",
       "type": "question",
-      "text": "Looking at your wins today, where did that success primarily come from?",
+      "axis": "locus",
+      "text": "You said '{q_energy_check}'. When something went well today, what made it happen?",
       "options": [
-        { "text": "I got lucky with the circumstances.", "next": "d_locus_victim" },
-        { "text": "My preparation and effort met the moment.", "next": "d_locus_victor" },
-        { "text": "A mix of team effort and my own initiative.", "next": "d_locus_victor" }
+        {
+          "text": "I prepared well and stayed focused",
+          "next": "d_locus_victor",
+          "signal": "axis1:internal"
+        },
+        {
+          "text": "Honestly, the timing just worked out",
+          "next": "d_locus_victim",
+          "signal": "axis1:external"
+        },
+        {
+          "text": "I adapted quickly when the situation shifted",
+          "next": "d_locus_victor",
+          "signal": "axis1:internal"
+        },
+        {
+          "text": "The team came through — I relied on others",
+          "next": "d_locus_victor",
+          "signal": "axis1:internal"
+        }
       ]
     },
+
+    "q_locus_choice": {
+      "id": "q_locus_choice",
+      "type": "question",
+      "axis": "locus",
+      "text": "Think of one moment today where things got difficult. Looking back — did you have any choice in how you responded?",
+      "options": [
+        {
+          "text": "Yes — I could have responded differently and I knew it",
+          "next": "d_locus_choice_victor",
+          "signal": "axis1:internal"
+        },
+        {
+          "text": "Not really — the situation left me no room",
+          "next": "d_locus_choice_victim",
+          "signal": "axis1:external"
+        },
+        {
+          "text": "Maybe — I didn't stop to think about it at the time",
+          "next": "d_locus_choice_victim",
+          "signal": "axis1:external"
+        }
+      ]
+    },
+
     "d_locus_victim": {
       "id": "d_locus_victim",
       "type": "decision",
       "logic": "set locus=victim",
+      "signal": "axis1:external",
       "next": "r_locus_victim"
     },
+
     "d_locus_victor": {
       "id": "d_locus_victor",
       "type": "decision",
       "logic": "set locus=victor",
+      "signal": "axis1:internal",
       "next": "r_locus_victor"
     },
+
     "r_locus_victim": {
       "id": "r_locus_victim",
       "type": "reflection",
-      "text": "It seems like today felt like an uphill battle where external factors held the steering wheel.",
-      "next": "bridge_locus_orientation"
+      "text": "You described today as '{q_energy_check}'. A day like that pulls attention outward — to what others did or didn't do, to what the situation allowed or didn't. That's a fair response. But somewhere in there, you made at least one call. Even waiting is a choice.",
+      "next": "q_locus_choice"
     },
+
     "r_locus_victor": {
       "id": "r_locus_victor",
       "type": "reflection",
-      "text": "You’ve navigated the day with a strong sense of agency. You're seeing the link between your choices and outcomes.",
+      "text": "You described today as '{q_energy_check}' — and you stayed in the driver's seat through it. That's not a small thing. Seeing the link between your choices and outcomes is exactly what separates learning from just surviving a day.",
       "next": "bridge_locus_orientation"
     },
+
     "bridge_locus_orientation": {
       "id": "bridge_locus_orientation",
       "type": "bridge",
-      "text": "Now that we’ve looked at how you moved through the day, let's look at where your focus was directed.",
+      "text": "Now that we've looked at how you moved through the day — let's look at where your energy was directed.",
       "next": "q_orientation_focus"
     },
+
     "q_orientation_focus": {
       "id": "q_orientation_focus",
       "type": "question",
-      "text": "In your interactions today, which thought feels most familiar to you?",
+      "axis": "orientation",
+      "text": "In your interactions today, which of these thoughts feels most honest?",
       "options": [
-        { "text": "I hope my hard work was noticed and appreciated.", "next": "q_entitlement_check" },
-        { "text": "I hope my contributions helped the team move forward.", "next": "q_contribution_check" },
-        { "text": "I was mostly focused on getting my checklist done.", "next": "q_entitlement_check" }
+        {
+          "text": "I hope the effort I put in was noticed",
+          "next": "q_entitlement_check",
+          "signal": "axis2:entitlement"
+        },
+        {
+          "text": "I hope my work moved something forward for the team",
+          "next": "q_contribution_check",
+          "signal": "axis2:contribution"
+        },
+        {
+          "text": "I was mostly focused on getting through my own list",
+          "next": "q_entitlement_check",
+          "signal": "axis2:entitlement"
+        },
+        {
+          "text": "I kept looking for where I could be most useful",
+          "next": "q_contribution_check",
+          "signal": "axis2:contribution"
+        }
       ]
     },
+
     "q_entitlement_check": {
       "id": "q_entitlement_check",
       "type": "question",
-      "text": "When things didn't go perfectly today, what was your internal reaction?",
+      "axis": "orientation",
+      "text": "When things didn't go your way today, what was your internal reaction?",
       "options": [
-        { "text": "I felt frustrated because I wasn't getting the support I deserved.", "next": "d_orientation_entitled" },
-        { "text": "I wondered why the process is so much harder than it needs to be.", "next": "d_orientation_entitled" },
-        { "text": "I looked for ways to adjust my own approach to the situation.", "next": "d_orientation_contributor" }
+        {
+          "text": "I felt I deserved more support than I received",
+          "next": "d_orientation_entitled",
+          "signal": "axis2:entitlement"
+        },
+        {
+          "text": "I looked for ways to adjust my own approach to the situation.",
+          "next": "q_orientation_extra",
+          "signal": "axis2:contribution"
+        },
+        {
+          "text": "I felt frustrated that others weren't pulling their weight",
+          "next": "d_orientation_entitled",
+          "signal": "axis2:entitlement"
+        }
       ]
     },
+
     "q_contribution_check": {
       "id": "q_contribution_check",
       "type": "question",
-      "text": "How did it feel when you were able to support a colleague or a project goal?",
+      "axis": "orientation",
+      "text": "Was there a moment today where you helped someone with something that wasn't strictly your responsibility?",
       "options": [
-        { "text": "It felt rewarding to be the one providing the solution.", "next": "d_orientation_contributor" },
-        { "text": "It felt like a fair trade for the effort I put in.", "next": "d_orientation_entitled" },
-        { "text": "It felt natural—that's just how the work gets done.", "next": "d_orientation_contributor" }
+        {
+          "text": "Yes — and it felt like the right thing to do",
+          "next": "d_orientation_contributor",
+          "signal": "axis2:contribution"
+        },
+        {
+          "text": "It felt like a fair trade for the effort I put in.",
+          "next": "q_orientation_extra",
+          "signal": "axis2:entitlement"
+        },
+        {
+          "text": "I thought about it but didn't act on it",
+          "next": "d_orientation_entitled",
+          "signal": "axis2:entitlement"
+        }
       ]
     },
+
+    "q_orientation_extra": {
+      "id": "q_orientation_extra",
+      "type": "question",
+      "axis": "orientation",
+      "text": "If you're being honest — at the end of today, what felt more important to you?",
+      "options": [
+        {
+          "text": "That my work was recognized and valued",
+          "next": "d_orientation_entitled",
+          "signal": "axis2:entitlement"
+        },
+        {
+          "text": "That my work actually helped something or someone",
+          "next": "d_orientation_contributor",
+          "signal": "axis2:contribution"
+        }
+      ]
+    },
+
     "d_orientation_entitled": {
       "id": "d_orientation_entitled",
       "type": "decision",
       "logic": "set orientation=entitled",
+      "signal": "axis2:entitlement",
       "next": "r_orientation_entitled"
     },
+
     "d_orientation_contributor": {
       "id": "d_orientation_contributor",
       "type": "decision",
       "logic": "set orientation=contributor",
+      "signal": "axis2:contribution",
       "next": "r_orientation_contributor"
     },
+
     "r_orientation_entitled": {
       "id": "r_orientation_entitled",
       "type": "reflection",
-      "text": "It's natural to want support, but focusing on what's missing can overshadow the value you bring.",
+      "text": "It's natural to want recognition — we all carry that need. But when 'what did I receive today' becomes louder than 'what did I give today', the work starts to feel hollow. That gap is worth noticing.",
       "next": "bridge_orientation_radius"
     },
+
     "r_orientation_contributor": {
       "id": "r_orientation_contributor",
       "type": "reflection",
-      "text": "You seem to be deriving satisfaction from the act of giving and solving problems for the collective.",
+      "text": "You're drawing satisfaction from the act of contributing — not from the applause that follows. That's a quietly powerful place to work from. The people around you feel it, even when they don't say it.",
       "next": "bridge_orientation_radius"
     },
+
     "bridge_orientation_radius": {
       "id": "bridge_orientation_radius",
       "type": "bridge",
-      "text": "Finally, let's step back and look at the scope of your impact.",
+      "text": "One last shift — let's zoom out and look at who was in your frame today.",
       "next": "q_radius_scope"
     },
+
     "q_radius_scope": {
       "id": "q_radius_scope",
       "type": "question",
-      "text": "As you reflect on the most important task you did today, who was it for?",
+      "axis": "radius",
+      "text": "Think about the most meaningful thing you did today. Who were you ultimately doing it for?",
       "options": [
-        { "text": "It was primarily to clear my own backlog or tasks.", "next": "q_radius_narrow" },
-        { "text": "It was for a specific user, customer, or teammate.", "next": "q_radius_wide" },
-        { "text": "It was to move the needle on our larger mission.", "next": "q_radius_wide" }
+        {
+          "text": "Primarily to clear my own backlog",
+          "next": "q_radius_narrow",
+          "signal": "axis3:self"
+        },
+        {
+          "text": "For a specific colleague or teammate",
+          "next": "q_radius_wide",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "For a user or customer I may never meet",
+          "next": "q_radius_wide",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "For the larger mission we're working toward",
+          "next": "q_radius_wide",
+          "signal": "axis3:altro"
+        }
       ]
     },
+
     "q_radius_narrow": {
       "id": "q_radius_narrow",
       "type": "question",
-      "text": "When you finished that task, what was the next thing on your mind?",
+      "axis": "radius",
+      "text": "After you finished that task, what was the first thing on your mind?",
       "options": [
-        { "text": "What do I have to do next on my list?", "next": "d_radius_self" },
-        { "text": "How will this affect the person receiving the work?", "next": "d_radius_altro" },
-        { "text": "How does this help my team hit their targets?", "next": "d_radius_altro" }
+        {
+          "text": "What's next on my list",
+          "next": "q_radius_extra",
+          "signal": "axis3:self"
+        },
+        {
+          "text": "Whether the person receiving this would find it useful",
+          "next": "d_radius_altro",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "Whether this moved the needle for the team",
+          "next": "d_radius_altro",
+          "signal": "axis3:altro"
+        }
       ]
     },
+
     "q_radius_wide": {
       "id": "q_radius_wide",
       "type": "question",
-      "text": "How much of your day was spent considering the needs of people outside your immediate list?",
+      "axis": "radius",
+      "text": "When you hit a hard moment today, who came to mind?",
       "options": [
-        { "text": "I was very focused on the people my work touches.", "next": "d_radius_altro" },
-        { "text": "I tried, but my own deadlines took most of my focus.", "next": "d_radius_self" },
-        { "text": "I prioritized the bigger picture over my personal preferences.", "next": "d_radius_altro" }
+        {
+          "text": "Just me — it was my problem to solve",
+          "next": "d_radius_self",
+          "signal": "axis3:self"
+        },
+        {
+          "text": "My team — we were all affected by this",
+          "next": "d_radius_altro",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "A specific colleague who had it harder than me",
+          "next": "d_radius_altro",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "The end user or customer we're serving",
+          "next": "d_radius_altro",
+          "signal": "axis3:altro"
+        }
       ]
     },
+
+    "q_radius_extra": {
+      "id": "q_radius_extra",
+      "type": "question",
+      "axis": "radius",
+      "text": "Did you check in on anyone today — not because it was required, but because you noticed they might need it?",
+      "options": [
+        {
+          "text": "Yes — and it mattered to them",
+          "next": "d_radius_extra_altro",
+          "signal": "axis3:altro"
+        },
+        {
+          "text": "No — I was too focused on my own work",
+          "next": "d_radius_extra_self",
+          "signal": "axis3:self"
+        },
+        {
+          "text": "I noticed but didn't act on it",
+          "next": "d_radius_extra_self",
+          "signal": "axis3:self"
+        }
+      ]
+    },
+
     "d_radius_self": {
       "id": "d_radius_self",
       "type": "decision",
       "logic": "set radius=self",
+      "signal": "axis3:self",
       "next": "r_radius_self"
     },
+
     "d_radius_altro": {
       "id": "d_radius_altro",
       "type": "decision",
       "logic": "set radius=altro",
+      "signal": "axis3:altro",
       "next": "r_radius_altro"
     },
+
     "r_radius_self": {
       "id": "r_radius_self",
       "type": "reflection",
-      "text": "Your focus today was highly centered on your personal execution and immediate responsibilities.",
+      "text": "Today, your frame was tight — focused on your own execution and immediate responsibilities. That's not wrong. But the most meaningful work tends to happen when we occasionally look up from our own list and ask who else is affected by what we do.",
       "next": "summary_node"
     },
+
     "r_radius_altro": {
       "id": "r_radius_altro",
       "type": "reflection",
-      "text": "You've practiced perspective-taking today, looking at your work through the eyes of others.",
+      "text": "You kept others in your frame today — a colleague, a user, the mission. That kind of perspective-taking is what turns individual effort into collective progress. It's easy to miss. You didn't.",
       "next": "summary_node"
     },
+
     "summary_node": {
       "id": "summary_node",
       "type": "summary",
-      "text": "Today’s Story: You navigated the day as a {locus}, focusing on your role as a {orientation}, with a {radius} perspective on your impact. Tomorrow is a new chance to expand these boundaries.",
+      "text": "Today's reflection: You moved through a '{q_energy_check}' day with a {locus} orientation — seeing your work through a {orientation} lens, and holding a {radius} view of your impact.\n\nThese aren't fixed traits. They're today's snapshot. Come back tomorrow and see what shifts.",
       "next": "end"
     },
+
+    "d_locus_choice_victim": {
+      "id": "d_locus_choice_victim",
+      "type": "decision",
+      "logic": "set locus=victim",
+      "signal": "axis1:external",
+      "next": "r_locus_choice_victim"
+    },
+    "d_locus_choice_victor": {
+      "id": "d_locus_choice_victor",
+      "type": "decision",
+      "logic": "set locus=victor",
+      "signal": "axis1:internal",
+      "next": "r_locus_choice_victor"
+    },
+    "r_locus_choice_victim": {
+      "id": "r_locus_choice_victim",
+      "type": "reflection",
+      "text": "Not seeing a choice in that moment is honest. The awareness that you're noticing it now — that's already different from just moving on.",
+      "next": "bridge_locus_orientation"
+    },
+    "r_locus_choice_victor": {
+      "id": "r_locus_choice_victor",
+      "type": "reflection",
+      "text": "Even in a tough day, you found the choice point. That's not a small thing — most people don't pause long enough to see it.",
+      "next": "bridge_locus_orientation"
+    },
+    "d_radius_extra_self": {
+      "id": "d_radius_extra_self",
+      "type": "decision",
+      "logic": "set radius=self",
+      "signal": "axis3:self",
+      "next": "r_radius_self"
+    },
+    "d_radius_extra_altro": {
+      "id": "d_radius_extra_altro",
+      "type": "decision",
+      "logic": "set radius=altro",
+      "signal": "axis3:altro",
+      "next": "r_radius_altro"
+    },
+
     "end": {
       "id": "end",
       "type": "end",
-      "text": "Thank you for reflecting with me. Rest well."
+      "text": "That's it for today. Rest well — tomorrow is a fresh page."
     }
   }
 }

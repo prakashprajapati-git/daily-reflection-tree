@@ -1,46 +1,97 @@
-Design Rationale: The Daily Reflection Tree
-Author: Prakash Kumar Prajapati
+# Design Rationale: The Daily Reflection Tree
 
-Role: Artificial Intelligence Internship Applicant | DeepThought CultureTech Ventures Private Limited 
+**Author:** Prakash Kumar Prajapati  
+**Role:** AI Internship Applicant — DeepThought CultureTech Ventures
 
-1. Psychological Foundation
-The tree is built on three distinct but interconnected psychological axes, designed to move an employee from a reactive state to a proactive, contribution-oriented mindset.
+---
 
-Axis 1: Locus (Victim ↔ Victor)
-Theory: Julian Rotter’s Locus of Control (1954) and Carol Dweck’s Growth Mindset.
+## 1. Psychological Foundation
 
-Implementation: Questions target "Energy" and "Reaction to Friction." By identifying if an employee blames "the world" or "luck" (External Locus) versus "effort" or "strategy" (Internal Locus), the tree provides a mirror for their agency.
+**Axis 1 — Locus (Victim ↔ Victor)**  
+_Sources: Rotter (1954); Dweck (2006)_
 
-Design Choice: I used neutral language like "drained" vs "satisfied" to avoid triggering defensive responses, allowing for a more honest self-assessment.
+Questions probe the first instinct under friction and the attribution
+of success — the two most reliable markers of locus orientation from
+Rotter's original scale. The victim path routes through a secondary
+question (`q_locus_choice`) that asks "Did you have any choice in how
+you responded?" rather than stating the answer. This embodies the
+assignment's "wise colleague" tone — it invites the employee to find
+their agency, not be told they had it.
 
-Axis 2: Orientation (Entitlement ↔ Contribution)
-Theory: Psychological Entitlement (Campbell) and Organizational Citizenship Behavior (Organ).
+**Axis 2 — Orientation (Entitlement ↔ Contribution)**  
+_Sources: Campbell et al. (2004); Organ (1988)_
 
-Implementation: This axis probes the intent behind actions. Is the employee focused on "what I am owed" (Support/Notice) or "what I gave" (Helping the team)?
+Entitlement is invisible to the person holding it — it manifests as
+felt deprivation, not conscious claim. Questions therefore target
+internal monologue ("which thought feels most honest?") rather than
+behavior. A tiebreaker node (`q_orientation_extra`) forces a direct
+choice between recognition and impact — the clearest moment where
+orientation becomes undeniable. I avoided "Did you help a colleague?"
+because it invites socially desirable answers regardless of internal
+state.
 
-Design Choice: The "Checklist" option acts as a neutral "hidden" path that reveals a self-preservation mindset, which often correlates with a lack of contribution-focus.
+**Axis 3 — Radius (Self-Centric ↔ Altrocentric)**  
+_Sources: Maslow (1969); Batson (2011)_
 
-Axis 3: Radius (Self-Centric ↔ Altrocentric)
-Theory: Maslow’s Self-Transcendence and Batson’s Perspective-Taking.
+The axis asks who the employee was "ultimately doing it for" —
+borrowing Batson's perspective-taking framing. The narrow path routes
+through `q_radius_extra` ("Did you check in on anyone — not because
+it was required?") before concluding. This prevents the tree from
+delivering a binary verdict and gives the employee one more chance to
+surface altrocentric behavior.
 
-Implementation: The final shift focuses on the scope of the day’s work. Did the impact end at the employee’s desk, or did it reach the customer or the broader mission?
+---
 
-Design Choice: Questions ask about the "next thought" after finishing a task, capturing the "Radius" of their concern in a moment of transition.
+## 2. Technical Architecture
 
-2. Technical Architecture
-The system is designed as a Deterministic State Machine.
+The tree contains 35 nodes across 7 types, encoded in a single JSON
+file. Every path is traceable by following node IDs without running
+code. The Python agent is a pure state machine — identical inputs
+always produce identical outputs, with zero API calls at runtime.
 
-Zero-LLM Runtime: To ensure 100% reliability and zero latency, the logic is stored in a structured reflection-tree.json. This makes the "reflection" safe, consistent, and traceable.
+Answer interpolation stores the user's chosen text by node ID and
+resolves `{node_id}` placeholders at render time, producing
+personalized reflections ("You described today as 'Exhausting'...")
+without any generative model. Decision nodes carry `signal` fields
+(`axis1:internal`, `axis2:entitlement`) that make the psychological
+meaning of each routing decision auditable.
 
-Modular Node Types: By defining start, question, decision, bridge, and summary nodes, the engine (main.py) can be extended with thousands of new questions without changing a single line of code.
+---
 
-State Interpolation: The summary_node uses placeholder interpolation ({locus}, {orientation}, etc.). This allows the tool to generate a "personalized" story at the end while remaining strictly logic-driven.
+## 3. AI Collaboration and Guardrails
 
-3. AI Collaboration & Guardrails
-In alignment with the assignment guidelines, AI was used as a collaborative architect, not a blind generator.
+Gemini 2.5 Pro (Thinking mode) was used for research, question
+drafting, and code generation. Hallucination was controlled
+structurally — a strict JSON schema meant any invented node IDs or
+broken routing chains were caught immediately by the Python loader.
+The final product contains no runtime AI dependency.
 
-Negative Prompting: I strictly instructed the AI not to use clinical, managerial, or "toxic positivity" language. I forced the AI to adopt the persona of a "Wise Peer"—someone who observes rather than judges.
+**Negative prompting:** I explicitly banned clinical language,
+motivational-poster language, and managerial framing. Target register:
+a wise peer who observes without judging.
 
-Controlling Hallucination: Since the final product is a JSON file, the "Hallucination" risk was mitigated by defining a strict Schema. Any "hallucinated" fields by the AI were immediately caught by the Python loader during the development phase.
+**Where I overrode the AI:** The AI routed all Axis 1 paths directly
+to the bridge after one reflection. I rejected this — the victim path
+needed `q_locus_choice` to surface agency as a question, not assert
+it as a conclusion. I rewrote that branch manually.
 
-Human-in-the-Loop: I manually adjusted the transitions between Axis 1 and 2, as the AI initially suggested a "quiz-like" break. I re-wrote the bridge nodes to ensure the conversation felt like a single, flowing experience.
+---
+
+## 4. Trade-offs and What I'd Improve
+
+**Binary vs. weighted scoring:** The tree uses binary decision nodes
+for clarity. A weighted tally across multiple questions per axis would
+add nuance — but a tired employee at 7pm needs a clear path, not a
+percentage score.
+
+**With more time I would add:**
+
+- Weighted axis scoring replacing binary decision nodes
+- Full answer interpolation in every reflection node
+- 30-day session history to surface axis trends over time
+- A fourth axis — Temporality (rumination vs. anticipation) based on
+  Seligman (2011) and Nolen-Hoeksema's work
+
+---
+
+_The questions are the product. Everything else is scaffolding._
