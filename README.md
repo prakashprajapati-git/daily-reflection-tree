@@ -87,7 +87,7 @@ Every path through the tree is traceable by following `next` and `options[n].nex
 ## Tree at a Glance
 
 - **35 nodes** across 7 types
-- **11 question nodes** — all with 3–4 fixed options
+- **12 question nodes** — all with 3–4 fixed options
 - **2 branching paths per axis** — one per pole of each spectrum
 - **Full answer interpolation** — reflections reference the employee's exact earlier words
 - **Zero runtime dependencies** — the tree is static JSON walked by a simple state machine

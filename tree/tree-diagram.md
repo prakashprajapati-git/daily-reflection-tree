@@ -1,7 +1,8 @@
 # Daily Reflection Tree — Visual Logic Map
 
 Mermaid diagram of every node and branch in `reflection-tree.json`.
-All 35 nodes are represented. Decision nodes (diamonds) are invisible to the user — they set axis state and auto-advance.
+All 35 nodes are represented. Decision nodes (diamonds) are invisible
+to the user — they set axis state and auto-advance.
 
 ```mermaid
 graph TD
@@ -105,8 +106,8 @@ graph TD
 | Type       | Count  | Nodes                                                                                                                                                                                                                                         |
 | ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | start      | 1      | `start`                                                                                                                                                                                                                                       |
-| question   | 11     | `q_energy_check`, `q_locus_friction`, `q_locus_impact`, `q_locus_choice`, `q_orientation_focus`, `q_entitlement_check`, `q_contribution_check`, `q_orientation_extra`, `q_radius_scope`, `q_radius_narrow`, `q_radius_wide`, `q_radius_extra` |
-| decision   | 11     | `d_locus_victim`, `d_locus_victor`, `d_locus_choice_victim`, `d_locus_choice_victor`, `d_orientation_entitled`, `d_orientation_contributor`, `d_radius_self`, `d_radius_altro`, `d_radius_extra_self`, `d_radius_extra_altro`                 |
+| question   | 12     | `q_energy_check`, `q_locus_friction`, `q_locus_impact`, `q_locus_choice`, `q_orientation_focus`, `q_entitlement_check`, `q_contribution_check`, `q_orientation_extra`, `q_radius_scope`, `q_radius_narrow`, `q_radius_wide`, `q_radius_extra` |
+| decision   | 10     | `d_locus_victim`, `d_locus_victor`, `d_locus_choice_victim`, `d_locus_choice_victor`, `d_orientation_entitled`, `d_orientation_contributor`, `d_radius_self`, `d_radius_altro`, `d_radius_extra_self`, `d_radius_extra_altro`                 |
 | reflection | 8      | `r_locus_victim`, `r_locus_victor`, `r_locus_choice_victim`, `r_locus_choice_victor`, `r_orientation_entitled`, `r_orientation_contributor`, `r_radius_self`, `r_radius_altro`                                                                |
 | bridge     | 2      | `bridge_locus_orientation`, `bridge_orientation_radius`                                                                                                                                                                                       |
 | summary    | 1      | `summary_node`                                                                                                                                                                                                                                |
