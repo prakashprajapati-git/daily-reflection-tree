@@ -1,7 +1,7 @@
 # Design Rationale: The Daily Reflection Tree
 
 **Author:** Prakash Kumar Prajapati  
-**Role:** AI Internship Applicant — DeepThought CultureTech Ventures
+**Role:** Artificial Intelligence Internship Applicant — DeepThought CultureTech Ventures Private Limited 
 
 ---
 
